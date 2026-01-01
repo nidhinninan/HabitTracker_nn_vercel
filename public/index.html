@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Resolution Habit Tracker</title>
+    <style>
+        :root {
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-primary: #0ea5e9;
+            --color-primary-hover: #06b6d4;
+            --color-success: #10b981;
+            --color-border: #334155;
+            --color-error: #ef4444;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            --transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-family);
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-display {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .progress-section {
+            background-color: var(--color-bg-secondary);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9 0%, #06b6d4 100%);
+            transition: var(--transition);
+            border-radius: 4px;
+        }
+
+        .habits-section {
+            background-color: var(--color-bg-secondary);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .habit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .habit-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .habit-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .habit-list::-webkit-scrollbar-thumb {
+            background-color: var(--color-border);
+            border-radius: 3px;
+        }
+
+        .habit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .habit-item:hover {
+            background-color: rgba(14, 165, 233, 0.05);
+            border-color: var(--color-primary);
+        }
+
+        .habit-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--color-primary);
+        }
+
+        .habit-text {
+            flex: 1;
+            font-size: 14px;
+            word-break: break-word;
+            transition: var(--transition);
+        }
+
+        .habit-item input[type="checkbox"]:checked + .habit-text {
+            color: var(--color-text-secondary);
+            text-decoration: line-through;
+        }
+
+        .habit-delete {
+            background: none;
+            border: none;
+            color: var(--color-error);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 6px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .habit-delete:hover {
+            color: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .add-habit-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .add-habit-input {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            font-family: var(--font-family);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .add-habit-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .add-habit-input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-family);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--color-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-border);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #475569;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .notes-section {
+            background-color: var(--color-bg-secondary);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text-primary);
+            font-family: var(--font-family);
+            font-size: 14px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .notes-textarea::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            text-align: center;
+            animation: slideIn 300ms ease-out;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .status-message.success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-message.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-message.loading {
+            background-color: rgba(14, 165, 233, 0.1);
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .habit-count {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .action-buttons .btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎯 2026 Resolutions</h1>
+        <div class="date-display" id="dateDisplay"></div>
+    </header>
+
+    <div class="main-container">
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>Daily Progress</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Habits Section -->
+        <div class="habits-section">
+            <div class="section-title">Habits</div>
+            <div class="habit-list" id="habitList"></div>
+            <div class="habit-count">
+                <span id="habitCount">Loading...</span>
+            </div>
+            <div class="add-habit-container">
+                <input
+                    type="text"
+                    class="add-habit-input"
+                    id="newHabitInput"
+                    placeholder="Add new habit (max 15)..."
+                    maxlength="50"
+                >
+                <button class="btn btn-primary btn-small" id="addHabitBtn">Add</button>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-section">
+            <div class="section-title">Daily Reflections</div>
+            <textarea
+                class="notes-textarea"
+                id="notesInput"
+                placeholder="What did you accomplish today? Any challenges?"
+                maxlength="500"
+            ></textarea>
+            <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 4px;">
+                <span id="charCount">0</span>/500
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-secondary" id="resetDayBtn">Reset Day</button>
+            <button class="btn btn-primary" id="syncBtn">Sync to Notion</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
