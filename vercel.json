@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "buildCommand": "npm install",
-  "outputDirectory": "public",
-  "env": {
-    "NOTION_KEY": "@notion_key",
-    "NOTION_DB_ID": "@notion_db_id"
-  }
-}
