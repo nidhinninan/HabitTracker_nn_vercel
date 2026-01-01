@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
 
     if (!process.env.NOTION_KEY || !process.env.NOTION_DB_ID) {
         console.error('Missing Notion configuration');
-        return res.status(500).json({ error: 'Notion API not configured', message: 'Check environment variables' });
+        return res.status(500).json({ error: 'Notion API not configured' });
     }
 
     try {
@@ -38,9 +38,12 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Invalid request payload' });
         }
 
+        // Clean up database ID (remove hyphens if present)
+        const cleanDatabaseId = databaseId.replace(/-/g, '');
+
         // First, check if entry for today exists
         const queryResponse = await notion.databases.query({
-            database_id: databaseId,
+            database_id: cleanDatabaseId,
             filter: {
                 property: 'Date',
                 date: {
@@ -51,7 +54,6 @@ module.exports = async (req, res) => {
 
         let pageId = null;
         if (queryResponse.results.length > 0) {
-            // Entry exists - get its ID
             pageId = queryResponse.results[0].id;
         }
 
@@ -109,7 +111,7 @@ module.exports = async (req, res) => {
             // Create new page
             response = await notion.pages.create({
                 parent: {
-                    database_id: databaseId,
+                    database_id: cleanDatabaseId,
                 },
                 properties: pageProperties,
             });
@@ -123,13 +125,16 @@ module.exports = async (req, res) => {
         });
     } catch (error) {
         console.error('Notion API error:', error);
+        console.error('Database ID used:', databaseId);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
 
         if (error.code === 'unauthorized') {
-            return res.status(401).json({ error: 'Invalid Notion API key', message: error.message });
+            return res.status(401).json({ error: 'Invalid Notion API key' });
         }
 
         if (error.code === 'object_not_found') {
-            return res.status(404).json({ error: 'Database not found', message: 'Check NOTION_DB_ID' });
+            return res.status(404).json({ error: 'Database not found' });
         }
 
         return res.status(500).json({
