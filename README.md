@@ -1,9 +1,10 @@
-# HabitTracker_nn_vercel
-Simple new year resolution habit tracker connected to Vercel. Build using Perplexity Labs
 
 # 2026 Resolution Habit Tracker
 
 A minimalist habit tracker that uses Notion as its single source of truth. All data persists in Notion, accessible from any device/browser.
+
+## HabitTracker_nn_vercel
+Simple new year resolution habit tracker connected to Vercel. Build using Perplexity Labs
 
 ## Features
 
