@@ -9,7 +9,6 @@ const databaseId = process.env.NOTION_DB_ID;
 /**
  * Vercel Serverless Function: GET /api/load
  * Fetches today's habit entry from Notion database
- * Returns the latest entry for today's date
  */
 module.exports = async (req, res) => {
     // CORS headers
@@ -37,7 +36,7 @@ module.exports = async (req, res) => {
 
         // Query Notion database for today's entry
         const response = await notion.databases.query({
-            database_id: databaseId,
+            database_id: databaseId.replace(/-/g, ''),
             filter: {
                 property: 'Date',
                 date: {
@@ -53,7 +52,6 @@ module.exports = async (req, res) => {
         });
 
         if (response.results.length === 0) {
-            // No entry for today - return empty state
             return res.status(200).json({
                 found: false,
                 date: today,
@@ -101,6 +99,8 @@ module.exports = async (req, res) => {
         });
     } catch (error) {
         console.error('Notion API error:', error);
+        console.error('Database ID used:', databaseId);
+        console.error('Error stack:', error.stack);
 
         if (error.code === 'unauthorized') {
             return res.status(401).json({ error: 'Invalid Notion API key' });
