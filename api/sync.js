@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
             database_id: cleanDatabaseId,
             filter: {
                 property: 'Date',
-                date: {
+                title: {
                     equals: date,
                 },
             },
