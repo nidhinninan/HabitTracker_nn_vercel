@@ -1,8 +1,15 @@
+// Helper to get YYYY-MM-DD in local timezone
+function getLocalISODate() {
+    const tzoffset = (new Date()).getTimezoneOffset() * 60000; // offset in milliseconds
+    const localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+    return localISOTime;
+}
+
 const state = {
     habits: [],
     notes: '',
     completedToday: {},
-    todayDate: new Date().toISOString().split('T')[0],
+    todayDate: getLocalISODate(),
     lastLoadedDate: null,
 };
 
@@ -29,8 +36,8 @@ function updateDateDisplay() {
 async function loadHabitsFromNotion() {
     try {
         showStatus('Loading your habits...', 'loading');
-        
-        const response = await fetch(API_ENDPOINT, {
+
+        const response = await fetch(`${API_ENDPOINT}?date=${state.todayDate}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
