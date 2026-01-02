@@ -32,7 +32,16 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const today = new Date().toISOString().split('T')[0];
+        // Use provided date from query or fallback to local date logic
+        // Note: For server-side fallback, we can't truly know client timezone, 
+        // so query param is preferred.
+        let today = req.query.date;
+
+        if (!today) {
+            // Server-side best effort for local date if param is missing
+            // (Uses environment TZ or defaults to UTC if not set)
+            today = new Date().toISOString().split('T')[0];
+        }
 
         // Query Notion database for today's entry
         const response = await notion.databases.query({
