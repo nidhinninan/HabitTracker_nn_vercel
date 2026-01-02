@@ -39,13 +39,13 @@ module.exports = async (req, res) => {
             database_id: databaseId.replace(/-/g, ''),
             filter: {
                 property: 'Date',
-                date: {
+                title: {
                     equals: today,
                 },
             },
             sorts: [
                 {
-                    property: 'created_time',
+                    timestamp: 'created_time',
                     direction: 'descending',
                 },
             ],
@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
 
         // Extract habits array from rich_text
         const habitsText = properties.Habits?.rich_text?.[0]?.plain_text || '';
-        const habits = habitsText 
+        const habits = habitsText
             ? habitsText.split(',').map(h => h.trim()).filter(h => h)
             : [];
 
